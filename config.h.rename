@@ -1,0 +1,5 @@
+#define REMOTE_HOST ""
+#define SLEEP_DURATION_MINUTES 2 
+#define WIFI_SSID ""
+#define WIFI_PASSWORD ""
+#define WIFI_CONNECT_LIMIT 15000  //miliseconds
