@@ -1,21 +1,21 @@
 # ESP32 Request Repeater (HTTPS)
 
-**Work In Progress**
-
-A simple Arduino sketch for ESP32 that makes a TLS (HTTPS) request to a supplied host then puts the device to sleep for a specified period before doing it again. Read a complete description of the code in [Putting an ESP32 Device to Sleep](https://johnwargo.com/posts/2025/esp32-sleep/).
+A simple Arduino sketch for ESP32 that makes a TLS (HTTPS) request to a supplied host then puts the device to sleep for a specified period before doing it again. This is the TLS version of the sketch described in [Putting an ESP32 Device to Sleep](https://johnwargo.com/posts/2025/esp32-sleep/).
 
 ## Background
 
 I wanted to learn how to use the power management capabilities of the ESP32 processor and this is the sketch I created to help me learn. I'd been doing a lot of work sending HTTP and HTTPS requests from an ESP32 device, so that made me think of creating a periodic requester sketch.
 
-The ideas is that there's some device that needs to phone home periodically. 
+The ideas is that there's some device that needs to phone home periodically; connect to a remote host using HTTPS and send some data to the server before shutting down.
 
 ## Configuration
 
 To configure the sketch, copy the repository's `config.h.rename` to `config.h` (in the same folder) then update the contents of the new file with the settings for your particular environment.
 
+This sketch uses the [Bacon Ipsum JSON API](https://baconipsum.com/json-api/). 
+
 ```c
-#define REMOTE_HOST "http://someremotehost.com/something"
+#define REMOTE_HOST "https://baconipsum.com/api/?type=meat-and-filler&paras=1"
 #define SLEEP_DURATION_MINUTES 1.5
 #define WIFI_SSID "MyLocalNetwork"
 #define WIFI_PASSWORD "my long and complicated wi-fi password"
@@ -32,6 +32,8 @@ To configure the sketch, copy the repository's `config.h.rename` to `config.h` (
 
 Once you've populated the `config.h` file, save your changes then build and deploy the sketch to an ESP32 device.
 
+The repository contains the Certificate Authority certificate for the Bacon Ipsum site; if you connect to a different host, you must generate the certificate file used by the sketch using the instructions found in [Automated Public Cert to Arduino Header Conversion](https://johnwargo.com/posts/2025/public-cert-arduino/).
+
 ## Operation
 
 When the sketch runs, it:
@@ -39,27 +41,26 @@ When the sketch runs, it:
 1. Tells you how many times it's woken and made (or tried to make) a request
 2. Waits for 30 seconds so you can upload sketch updates to the device
 3. Connects to the Wi-Fi network
-4. Sends the request
+4. Sends the request, displaying the results on the Serial Monitor
 5. Puts the device to sleep for `SLEEP_DURATION_MINUTES`
 
 Here's an example of the sketch's output to the Serial Monitor:
 
 ```text
-**************************
-* ESP32 Request Repeater *
-**************************
-Sketch restarted 4 times
-Wakeup Reason: Timer
+**********************************
+* ESP32 Request Repeater (HTTPS) *
+**********************************
+Wakeup Reason: Not caused by exit from deep sleep
 Waiting 30 seconds to allow for sketch uploads
 
 Connecting to MyLocalNetwork
-..
+...
 WiFi connected
 IP address: 
 192.168.86.63
-Connecting to http://someremotehost.com/something
+Connecting to https://baconipsum.com/api/?type=meat-and-filler&paras=1
 Response: 200
-Success
+["Aliqua ullamco shankle tempor cupidatat qui strip steak turducken veniam sint irure consequat alcatra minim est.  Ut brisket strip steak turducken, tenderloin nostrud sint elit.  Ipsum dolore non ham hock.  Exercitation brisket commodo veniam ham hock pancetta ullamco."]
 ```
 
 **Note:** If the device cannot connect to the Wi-Fi network for `WIFI_CONNECT_LIMIT` milliseconds, the sketch puts the device to sleep hoping that when it wakes up again the Wi-Fi network connection will succeed.
