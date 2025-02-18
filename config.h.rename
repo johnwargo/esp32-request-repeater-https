@@ -1,12 +1,5 @@
-#define REMOTE_HOST ""
+#define REMOTE_HOST "https://baconipsum.com/api/?type=meat-and-filler&paras=1"
 #define SLEEP_DURATION_MINUTES 1.5
 #define WIFI_SSID ""
 #define WIFI_PASSWORD ""
 #define WIFI_CONNECT_LIMIT 30000  //miliseconds
-
-#define USE_PARAMS false
-const int PARAM_ROWS = 2;
-String paramsArray[PARAM_ROWS][2] = {
-  { "", "" },
-  { "", "" }
-};

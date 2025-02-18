@@ -105,9 +105,7 @@ void callRemoteHost() {
   if (https.begin(*client, REMOTE_HOST)) {
     // start connection to host as a GET request
     int httpCode = https.GET();
-    // httpCode is negative on library error
-    if (httpCode > 0) {
-      // Request sent and response handled
+    if (httpCode > 0) {  // httpCode is negative on error
       Serial.printf("Response: %d\n", httpCode);
       if (httpCode == HTTP_CODE_OK) {
         String payload = https.getString();
@@ -118,7 +116,7 @@ void callRemoteHost() {
     }
     // close the connection
     https.end();
-  }  
+  }
 }
 
 // docs: https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/sleep_modes.html#_CPPv418esp_sleep_source_t
