@@ -61,6 +61,7 @@ void setup() {
     if (connectToNetwork()) callRemoteHost();
     esp_deep_sleep_start();
   } else {
+    // this should never happen
     Serial.println("Unable to create client");
     for (;;) delay(100);  // fatal error, so go into an infinite loop
   }
