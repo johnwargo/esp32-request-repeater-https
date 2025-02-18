@@ -1,6 +1,8 @@
 # ESP32 Request Repeater (HTTPS)
 
-A simple Arduino sketch for ESP32 that makes a TLS (HTTPS) request to a supplied host then puts the device to sleep for a specified period before doing it again. This is the TLS version of the sketch described in [Putting an ESP32 Device to Sleep](https://johnwargo.com/posts/2025/esp32-sleep/).
+A simple Arduino sketch for ESP32 that makes a TLS (HTTPS) request to a supplied host then puts the device to sleep for a specified period before doing it again. 
+
+This is the HTTPS version of the sketch published in [ESP32 Request Repeater (HTTP)](https://github.com/johnwargo/esp32-request-repeater-http) and described in [Putting an ESP32 Device to Sleep](https://johnwargo.com/posts/2025/esp32-sleep/).
 
 ## Background
 
@@ -19,7 +21,7 @@ This sketch uses the [Bacon Ipsum JSON API](https://baconipsum.com/json-api/).
 #define SLEEP_DURATION_MINUTES 1.5
 #define WIFI_SSID "MyLocalNetwork"
 #define WIFI_PASSWORD "my long and complicated wi-fi password"
-#define WIFI_CONNECT_LIMIT 30000  //miliseconds
+#define WIFI_CONNECT_LIMIT 30000  //milliseconds
 ```
 
 | Config Setting         | Description |
