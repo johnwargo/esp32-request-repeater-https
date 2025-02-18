@@ -13,8 +13,10 @@
 
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <WiFiClientSecure.h>
 #include "esp_sleep.h"
 
+#include "cert.h"
 #include "config.h"
 
 // store the credentials in the project's config.h file
@@ -26,7 +28,8 @@ const long minutes2Microseconds = 60000000;
 // store in the RTC (realtime clock) storage area
 RTC_DATA_ATTR unsigned int restartCounter = 0;
 
-HTTPClient http;
+HTTPClient https;
+NetworkClientSecure* client = new NetworkClientSecure;
 
 void setup() {
 
@@ -54,8 +57,15 @@ void setup() {
   delay(30000);
 
   esp_sleep_enable_timer_wakeup(SLEEP_DURATION_MINUTES * minutes2Microseconds);
-  if (connectToNetwork()) callRemoteHost();
-  esp_deep_sleep_start();
+  if (client) {
+    if (connectToNetwork()) callRemoteHost();
+    esp_deep_sleep_start();
+  } else {
+    Serial.println("Unable to create client");
+    // fatal error, so go into an infinite loop
+    for (;;) {
+    }
+  }
 }
 
 void loop() {
@@ -90,20 +100,25 @@ bool connectToNetwork() {
 }
 
 void callRemoteHost() {
+  client->setCACert(caCert);
   Serial.printf("Connecting to %s\n", REMOTE_HOST);
-  http.begin(REMOTE_HOST);
-  int httpCode = http.GET();
-  if (httpCode > 0) {  // httpCode will be negative on error
-    Serial.printf("Response: %d\n", httpCode);
-    if (httpCode == HTTP_CODE_OK) {
-      Serial.println("Success");
+  if (https.begin(*client, REMOTE_HOST)) {
+    // start connection to host as a GET request
+    int httpCode = https.GET();
+    // httpCode is negative on library error
+    if (httpCode > 0) {
+      // Request sent and response handled
+      Serial.printf("Response: %d\n", httpCode);
+      if (httpCode == HTTP_CODE_OK) {
+        String payload = https.getString();
+        Serial.println(payload);
+      }
+    } else {
+      Serial.printf("GET failed, error: %s\n", https.errorToString(httpCode).c_str());
     }
-    String payload = http.getString();
-    Serial.println(payload);
-  } else {
-    Serial.printf("[HTTP] GET failed, error: %s\n", http.errorToString(httpCode).c_str());
-  }
-  http.end();
+    // close the connection
+    https.end();
+  }  
 }
 
 // docs: https://docs.espressif.com/projects/esp-idf/en/stable/esp32/api-reference/system/sleep_modes.html#_CPPv418esp_sleep_source_t
