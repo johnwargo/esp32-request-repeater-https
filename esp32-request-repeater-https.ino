@@ -44,27 +44,25 @@ void setup() {
   // before trying to use them
   if (String(ssid).isEmpty() || String(password).isEmpty()) {
     Serial.println("\nMissing Wi-Fi credentials");
-    for (;;) {}
+    for (;;) {}  // fatal error, so go into an infinite loop
   }
 
   restartCounter += 1;
   if (restartCounter > 1) Serial.printf("Sketch restarted %d times\n", restartCounter);
   displayWakeupReason();
 
-  // Wait 30 seconds to provide some time to deploy updates to the sketch otherwise it will
-  // disconnect as soon as its done and you won't be able to save updates to the device
-  Serial.println("Waiting 30 seconds to allow for sketch uploads");
-  delay(30000);
-
-  esp_sleep_enable_timer_wakeup(SLEEP_DURATION_MINUTES * minutes2Microseconds);
   if (client) {
+    // Wait 30 seconds to provide some time to deploy updates to the sketch otherwise it will
+    // disconnect as soon as its done and you won't be able to save updates to the device
+    Serial.println("Waiting 30 seconds to allow for sketch uploads");
+    delay(30000);
+    // set the sleep duration (in microseconds)
+    esp_sleep_enable_timer_wakeup(SLEEP_DURATION_MINUTES * minutes2Microseconds);
     if (connectToNetwork()) callRemoteHost();
     esp_deep_sleep_start();
   } else {
     Serial.println("Unable to create client");
-    // fatal error, so go into an infinite loop
-    for (;;) {
-    }
+    for (;;) delay(100);  // fatal error, so go into an infinite loop
   }
 }
 
