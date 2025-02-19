@@ -29,7 +29,7 @@ const long minutes2Microseconds = 60000000;
 RTC_DATA_ATTR unsigned int restartCounter = 0;
 
 HTTPClient https;
-NetworkClientSecure* client = new NetworkClientSecure;
+WiFiClientSecure* client = new WiFiClientSecure;
 
 void setup() {
 
